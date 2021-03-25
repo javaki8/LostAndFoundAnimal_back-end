@@ -73,7 +73,7 @@ public class LostAndFoundController {
 		return lostandfound;
 	}
 
-	// {id}인 feed 파일 1개 추가
+	// {id}인 lostAndFound 파일 1개 추가
 	@RequestMapping(value = "/lostandfounds/{id}/animal-files", method = RequestMethod.POST)
 	public AnimalFile createLostAndFoundFile(@PathVariable("id") long id, @RequestPart("data") MultipartFile file,
 			HttpServletResponse res) throws IOException {
@@ -101,18 +101,16 @@ public class LostAndFoundController {
 		return animalFile;
 	}
 
-	// 전단지
-//	@RequestMapping(value = "/lostandfounds", method = RequestMethod.GET)
-//	public LostAndFound getLostAndFound(@PathVariable("id") long id) {
-//
-//		List<LostAndFound> list = repo.findAll(Sort.by("id").descending());
-//		for (LostAndFound lostandfound : list) {
-//			for (AnimalFile file : lostandfound.getFiles()) {
-//				file.setDataUrl(apiConfig.getBasePath() + "/lostandfound-files/" + file.getId());
-//			}
-//		}
-//
-//		return;
-//	}
+	// 상세보기 {id}
+	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
+
+	public LostAndFound detail
+
+	(@PathVariable("id") long id, @RequestBody String content, HttpServletResponse res) {
+
+		LostAndFound lostandfound = repo.findById(id).orElse(null);
+
+		return lostandfound;
+	}
 
 }

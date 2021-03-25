@@ -37,16 +37,26 @@ public class LostAndFound {
 	private String status;
 
 	@Column(columnDefinition = "TEXT")
-
+	// 사용자이름
 	private String name;
+	// 지역
 	private String area;
+	// 털색
 	private String color;
+	// 성별
 	private String gender;
+	// 연락처
 	private String number;
+	// 분실
 	private String lost;
+	// 보호
 	private String found;
+	// 날짜
 	private String date;
+	// 특징
 	private String content;
+	// 축종(종류)
+	private String type;
 
 	@OneToMany
 	@JoinColumn(name = "lostfoundId")
