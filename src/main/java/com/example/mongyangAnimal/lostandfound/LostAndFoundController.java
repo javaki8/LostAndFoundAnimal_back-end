@@ -2,6 +2,7 @@ package com.example.mongyangAnimal.lostandfound;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,18 +54,11 @@ public class LostAndFoundController {
 		List<LostAndFound> list = repo.findAll(Sort.by("id").descending());
 		for (LostAndFound lostandfound : list) {
 			for (AnimalFile file : lostandfound.getFiles()) {
-				file.setDataUrl(apiConfig.getBasePath() + "/lostandfound-files/" + file.getId());
+				file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
 			}
 		}
 
 		return list;
-	}
-
-	// 전화번호 조회
-	// http://localhost:8080/lostandfounds/search/number?keyword=010-1111-2222
-	@GetMapping(value = "/lostandfounds/search/number")
-	public List<LostAndFound> getLostAndFoundsByNumber(@RequestParam("keyword") String keyword) {
-		return repo.findByNumber(keyword);
 	}
 
 	// 1건 추가
@@ -71,6 +67,24 @@ public class LostAndFoundController {
 
 		repo.save(lostandfound);
 		return lostandfound;
+	}
+
+	// 상세보기 {id}
+	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
+
+	public LostAndFound detailAnimal(@PathVariable("id") long id, @RequestBody String content,
+			HttpServletResponse res) {
+
+		LostAndFound lostandfound = repo.findById(id).orElse(null);
+
+		return lostandfound;
+	}
+
+	// 전화번호 조회
+	// http://localhost:8080/lostandfounds/search/number?keyword=010-1111-2222
+	@GetMapping(value = "/lostandfounds/search/number")
+	public List<LostAndFound> getLostAndFoundsByNumber(@RequestParam("keyword") String keyword) {
+		return repo.findByNumber(keyword);
 	}
 
 	// {id}인 lostAndFound 파일 1개 추가
@@ -97,20 +111,46 @@ public class LostAndFoundController {
 				.contentType(file.getContentType()).build();
 
 		fileRepo.save(animalFile);
-		animalFile.setDataUrl(apiConfig.getBasePath() + "/lostandfound-files/" + animalFile.getId());
+		animalFile.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + animalFile.getId());
+		System.out.println("URL : " + animalFile);
 		return animalFile;
 	}
 
-	// 상세보기 {id}
-	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
+	// {id}인 lostAndFound 에 lostandfound-files 목록 조회
+	@RequestMapping(value = "/lostandfounds/{id}/animal-files", method = RequestMethod.GET)
+	public List<AnimalFile> getAnimalFiles(@PathVariable("id") long id, HttpServletResponse res) {
 
-	public LostAndFound detail
+		if (repo.findById(id).orElse(null) == null) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
 
-	(@PathVariable("id") long id, @RequestBody String content, HttpServletResponse res) {
+		List<AnimalFile> animalFiles = fileRepo.findBylostfoundId(id);
+		for (AnimalFile file : animalFiles) {
+			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
+		}
+		System.out.println(animalFiles);
 
-		LostAndFound lostandfound = repo.findById(id).orElse(null);
+		return animalFiles;
+	}
 
-		return lostandfound;
+	// 파일 처리
+	@RequestMapping(value = "/animal-files/{id}", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> getFeedFile(@PathVariable("id") long id, HttpServletResponse res) throws IOException {
+		AnimalFile animalFile = fileRepo.findById(id).orElse(null);
+
+		if (animalFile == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.set("Content-Type", animalFile.getContentType() + ";charset=UTF-8");
+
+		responseHeaders.set("Content-Disposition",
+				"inline; filename=" + URLEncoder.encode(animalFile.getFileName(), "UTF-8"));
+
+		return ResponseEntity.ok().headers(responseHeaders)
+				.body(Files.readAllBytes(FILE_PATH.resolve(animalFile.getFileName())));
 	}
 
 }
