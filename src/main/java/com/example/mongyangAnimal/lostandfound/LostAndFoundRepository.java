@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 public interface LostAndFoundRepository // <entity타입, id타입>
 		extends JpaRepository<LostAndFound, Long> {
 
-	public List<LostAndFound> findByName(String name);
+	public LostAndFound findByName(String name);
 
-	public List<LostAndFound> findByNumber(String number);
+	public LostAndFound findByNumber(String number);
 
 	public List<LostAndFound> findByName(String name, Pageable pageable);
 

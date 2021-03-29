@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,12 +71,19 @@ public class LostAndFoundController {
 	}
 
 	// 상세보기 {id}
-	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
+	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.GET)
 
-	public LostAndFound detailAnimal(@PathVariable("id") long id, @RequestBody String content,
-			HttpServletResponse res) {
+	public @ResponseBody LostAndFound detailAnimal(@PathVariable("id") long id, HttpServletResponse res) {
 
 		LostAndFound lostandfound = repo.findById(id).orElse(null);
+
+		if (lostandfound == null) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		for (AnimalFile file : lostandfound.getFiles()) {
+			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
+		}
 
 		return lostandfound;
 	}
@@ -83,8 +91,39 @@ public class LostAndFoundController {
 	// 전화번호 조회
 	// http://localhost:8080/lostandfounds/search/number?keyword=010-1111-2222
 	@GetMapping(value = "/lostandfounds/search/number")
-	public List<LostAndFound> getLostAndFoundsByNumber(@RequestParam("keyword") String keyword) {
-		return repo.findByNumber(keyword);
+	public @ResponseBody LostAndFound getLostAndFoundsByNumber(@RequestParam("keyword") String keyword,
+			HttpServletResponse res) {
+
+		LostAndFound list = repo.findByNumber(keyword);
+		// isEmpty() --> null 값 비교
+		if (list == null) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+
+		return list;
+	}
+
+	// 1건 수정
+	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PUT)
+
+	public LostAndFound modifyAnimal
+
+	(@PathVariable("id") long id, @RequestBody String content, String number, HttpServletResponse res) {
+
+		LostAndFound animal = repo.findById(id).orElse(null);
+
+		if (animal == null) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+		// 2. 수정할 필드(컬럼)만 수정한다.
+		animal.setContent(content);
+		animal.setNumber(number);
+
+		repo.save(animal);
+
+		return animal;
 	}
 
 	// {id}인 lostAndFound 파일 1개 추가

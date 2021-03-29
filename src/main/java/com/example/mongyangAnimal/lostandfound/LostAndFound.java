@@ -47,10 +47,8 @@ public class LostAndFound {
 	private String gender;
 	// 연락처
 	private String number;
-	// 분실
-	private String lost;
-	// 보호
-	private String found;
+	// 분실 and 보호 상태
+	private String state;
 	// 날짜
 	private String date;
 	// 특징

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AnimalFileRepository extends JpaRepository<AnimalFile, Long> {
 
-	List<AnimalFile> findBylostfoundId(long lostfoundId);
+	public List<AnimalFile> findBylostfoundId(long lostfoundId);
 
 }
