@@ -100,30 +100,34 @@ public class LostAndFoundController {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
+		for (AnimalFile file : list.getFiles()) {
+			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
+		}
 
 		return list;
 	}
 
 	// 1건 수정
-	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
 
 	public LostAndFound modifyAnimal
 
-	(@PathVariable("id") long id, @RequestBody String content, String number, HttpServletResponse res) {
+	(@PathVariable("id") long id, @RequestBody LostAndFound lostandfound, HttpServletResponse res) {
 
-		LostAndFound animal = repo.findById(id).orElse(null);
+		LostAndFound list = repo.findById(id).orElse(null);
 
-		if (animal == null) {
+		if (lostandfound == null) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
+
 		}
-		// 2. 수정할 필드(컬럼)만 수정한다.
-		animal.setContent(content);
-		animal.setNumber(number);
+		for (AnimalFile file : list.getFiles()) {
+			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
+		}
 
-		repo.save(animal);
+		repo.save(lostandfound);
 
-		return animal;
+		return list;
 	}
 
 	// {id}인 lostAndFound 파일 1개 추가
