@@ -6,10 +6,8 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +16,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,8 +47,8 @@ public class LostAndFoundController {
 	}
 
 	// 목록조회
-	@RequestMapping(value = "/lostandfounds", method = RequestMethod.GET)
-	public List<LostAndFound> getLostAndFounds(HttpServletRequest req) {
+	@GetMapping(value = "/lostandfounds")
+	public List<LostAndFound> getLostAndFounds() {
 
 		List<LostAndFound> list = repo.findAll(Sort.by("id").descending());
 		for (LostAndFound lostandfound : list) {
@@ -63,7 +61,7 @@ public class LostAndFoundController {
 	}
 
 	// 1건 추가
-	@RequestMapping(value = "/lostandfounds", method = RequestMethod.POST)
+	@PostMapping(value = "/lostandfounds")
 	public LostAndFound createLostAndFound(@RequestBody LostAndFound lostandfound) {
 
 		repo.save(lostandfound);
@@ -71,8 +69,7 @@ public class LostAndFoundController {
 	}
 
 	// 상세보기 {id}
-	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.GET)
-
+	@GetMapping(value = "/lostandfounds/{id}")
 	public @ResponseBody LostAndFound detailAnimal(@PathVariable("id") long id, HttpServletResponse res) {
 
 		LostAndFound lostandfound = repo.findById(id).orElse(null);
@@ -108,8 +105,7 @@ public class LostAndFoundController {
 	}
 
 	// 1건 수정
-	@RequestMapping(value = "/lostandfounds/{id}", method = RequestMethod.PATCH)
-
+	@PatchMapping(value = "/lostandfounds/{id}")
 	public LostAndFound modifyAnimal
 
 	(@PathVariable("id") long id, @RequestBody LostAndFound lostandfound, HttpServletResponse res) {
@@ -131,7 +127,7 @@ public class LostAndFoundController {
 	}
 
 	// {id}인 lostAndFound 파일 1개 추가
-	@RequestMapping(value = "/lostandfounds/{id}/animal-files", method = RequestMethod.POST)
+	@PostMapping(value = "/lostandfounds/{id}/animal-files")
 	public AnimalFile createLostAndFoundFile(@PathVariable("id") long id, @RequestPart("data") MultipartFile file,
 			HttpServletResponse res) throws IOException {
 
@@ -160,7 +156,7 @@ public class LostAndFoundController {
 	}
 
 	// {id}인 lostAndFound 에 lostandfound-files 목록 조회
-	@RequestMapping(value = "/lostandfounds/{id}/animal-files", method = RequestMethod.GET)
+	@GetMapping(value = "/lostandfounds/{id}/animal-files")
 	public List<AnimalFile> getAnimalFiles(@PathVariable("id") long id, HttpServletResponse res) {
 
 		if (repo.findById(id).orElse(null) == null) {
@@ -178,7 +174,7 @@ public class LostAndFoundController {
 	}
 
 	// 파일 처리
-	@RequestMapping(value = "/animal-files/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/animal-files/{id}")
 	public ResponseEntity<byte[]> getFeedFile(@PathVariable("id") long id, HttpServletResponse res) throws IOException {
 		AnimalFile animalFile = fileRepo.findById(id).orElse(null);
 

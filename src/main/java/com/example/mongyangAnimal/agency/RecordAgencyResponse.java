@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RecordAgencyResponse {
+
 	private ResponseData response;
 
 	@Data
 	@NoArgsConstructor
 	class ResponseData {
-
 		private ResponseBody body;
-
 	}
 
 	@Data
@@ -34,9 +33,11 @@ public class RecordAgencyResponse {
 	@Data
 	@NoArgsConstructor
 	class ResponseItem {
-		private String addrDtl; // 상세주소
+		private String orgAddrDtl; // 상세주소
 		private String orgNm; // 업체명
 		private String tel; // 업체 전화번호
-		private String addr; // 주소
+		private String orgAddr; // 주소
+		private String sido;
+		private String gugun;
 	}
 }

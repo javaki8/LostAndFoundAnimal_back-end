@@ -24,12 +24,16 @@ public class RecordAgency {
 	private String orgNm; // 업체명
 	private String tel; // 업체 전화번호
 	private String addr; // 주소
+	private String sido;
+	private String gugun;
 
 	public RecordAgency(RecordAgencyResponse.ResponseItem res) {
 
-		this.addr = res.getAddr();
-		this.addrDtl = res.getAddrDtl();
+		this.addr = res.getOrgAddr();
+		this.addrDtl = res.getOrgAddrDtl();
 		this.orgNm = res.getOrgNm();
 		this.tel = res.getTel();
+		this.sido = res.getSido();
+		this.gugun = res.getGugun();
 	}
 }
