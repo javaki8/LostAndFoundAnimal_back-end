@@ -11,6 +11,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,10 +53,11 @@ public class LostAndFoundController {
 	}
 
 	// 목록조회
+	// http://localhost:8080/lostandfounds?page=1&size=1
 	@GetMapping(value = "/lostandfounds")
-	public List<LostAndFound> getLostAndFounds() {
+	public Page<LostAndFound> getLostAndFounds(@RequestParam("page") int page, @RequestParam("size") int size) {
 
-		List<LostAndFound> list = repo.findAll(Sort.by("id").descending());
+		Page<LostAndFound> list = repo.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
 		for (LostAndFound lostandfound : list) {
 			for (AnimalFile file : lostandfound.getFiles()) {
 				file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());

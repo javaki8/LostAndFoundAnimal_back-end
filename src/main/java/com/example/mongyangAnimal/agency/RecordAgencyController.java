@@ -21,7 +21,7 @@ public class RecordAgencyController {
 	}
 
 	// 목록조회
-	// http://localhost:8080/recordAgency?sido=경기&gugun=성남
+
 	// http://localhost:8080/recordAgency?sido=경기&gugun=성남&page=1&size=1
 	@GetMapping(value = "/recordAgency")
 	public List<RecordAgency> getAgencyList(@RequestParam("sido") String sido, @RequestParam("gugun") String gugun,

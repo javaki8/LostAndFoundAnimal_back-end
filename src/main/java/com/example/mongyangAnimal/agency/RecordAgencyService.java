@@ -22,7 +22,7 @@ public class RecordAgencyService {
 		this.repo = repo;
 	}
 
-	@Scheduled(cron = "* 30 * * * *")
+	@Scheduled(cron = "* 07 * * * *")
 	// recordAgency 에서 데이터 요청하는 메소드
 	private void getAgencyData() throws IOException {
 
@@ -30,7 +30,7 @@ public class RecordAgencyService {
 		builder.append("http://openapi.animal.go.kr/openapi/service/rest");
 		builder.append("/recordAgencySrvc/recordAgency");
 		builder.append("?pageNo=1");
-		builder.append("&numOfRows=100");
+		builder.append("&numOfRows=1000");
 		builder.append("&ServiceKey=" + serviceKey);
 
 		URL url = new URL(builder.toString()); // URL 객체 생성
