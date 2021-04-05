@@ -34,6 +34,7 @@ public class LostAndFound {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	// 관리자 승인 and 거절
 	private String status;
 
 	@Column(columnDefinition = "TEXT")

@@ -1,4 +1,8 @@
 spring:
+  rabbitmq:
+    host: ec2-13-124-221-31.ap-northeast-2.compute.amazonaws.com
+    username: rabbitmq
+    password: password123
   application:
     name: mongyang
   profiles:
@@ -22,6 +26,7 @@ spring:
 #  redis:
 #    host: 127.0.0.1
 #    port: 6379
+  
 
 # 추가적인 속성
 api:

@@ -22,7 +22,7 @@ public class RecordAgencyService {
 		this.repo = repo;
 	}
 
-	@Scheduled(cron = "* 07 * * * *")
+	@Scheduled(cron = "* 52 * * * *")
 	// recordAgency 에서 데이터 요청하는 메소드
 	private void getAgencyData() throws IOException {
 

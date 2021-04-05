@@ -38,7 +38,7 @@ public class LostAndFoundController {
 	private LostAndFoundRepository repo;
 	private AnimalFileRepository fileRepo;
 	private final Path FILE_PATH = Paths.get("animal_file");
-	// private LostAndFoundService servicce;
+	private LostAndFoundService service;
 
 	@Autowired
 	private ApiConfiguration apiConfig;
@@ -46,10 +46,11 @@ public class LostAndFoundController {
 	@Autowired // @Repository에 해당하는 인터페이스
 				// 구현체(object, instance <- class)를
 				// 생성해서 주입
-	public LostAndFoundController(LostAndFoundRepository repo, AnimalFileRepository fileRepo) {
+	public LostAndFoundController(LostAndFoundRepository repo, AnimalFileRepository fileRepo,
+			LostAndFoundService service) {
 		this.repo = repo;
 		this.fileRepo = fileRepo;
-		// this.service = service;
+		this.service = service;
 	}
 
 	// 목록조회
@@ -71,8 +72,13 @@ public class LostAndFoundController {
 	@PostMapping(value = "/lostandfounds")
 	public LostAndFound createLostAndFound(@RequestBody LostAndFound lostandfound) {
 
+		System.out.println(lostandfound);
 		repo.save(lostandfound);
+
+		service.sendAnimal(lostandfound);
+
 		return lostandfound;
+
 	}
 
 	// 상세보기 {id}
@@ -128,8 +134,6 @@ public class LostAndFoundController {
 			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
 		}
 
-		repo.save(lostandfound);
-		// service.sendAnimal(request); 서비스에 있는 메소드
 		return list;
 	}
 
