@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -43,9 +41,7 @@ public class LostAndFoundController {
 	@Autowired
 	private ApiConfiguration apiConfig;
 
-	@Autowired // @Repository에 해당하는 인터페이스
-				// 구현체(object, instance <- class)를
-				// 생성해서 주입
+	@Autowired
 	public LostAndFoundController(LostAndFoundRepository repo, AnimalFileRepository fileRepo,
 			LostAndFoundService service) {
 		this.repo = repo;
@@ -53,12 +49,15 @@ public class LostAndFoundController {
 		this.service = service;
 	}
 
-	// 목록조회
-	// http://localhost:8080/lostandfounds?page=1&size=1
+	// 관리자 "승인"된 것만 목록 조회
+	// http://localhost:8080/lostandfounds?status=승인&page=1&size=3
 	@GetMapping(value = "/lostandfounds")
-	public Page<LostAndFound> getLostAndFounds(@RequestParam("page") int page, @RequestParam("size") int size) {
+	public Page<LostAndFound> getLostAndFounds(@RequestParam("status") String status, @RequestParam("page") int page,
+			@RequestParam("size") int size) {
 
-		Page<LostAndFound> list = repo.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+		Page<LostAndFound> list = repo.findByStatusContaining(status,
+				PageRequest.of(page, size, Sort.by("id").descending()));
+
 		for (LostAndFound lostandfound : list) {
 			for (AnimalFile file : lostandfound.getFiles()) {
 				file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
@@ -73,8 +72,9 @@ public class LostAndFoundController {
 	public LostAndFound createLostAndFound(@RequestBody LostAndFound lostandfound) {
 
 		System.out.println(lostandfound);
-		repo.save(lostandfound);
 
+		repo.save(lostandfound);
+		// 관리자 전송
 		service.sendAnimal(lostandfound);
 
 		return lostandfound;
@@ -134,7 +134,8 @@ public class LostAndFoundController {
 			file.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + file.getId());
 		}
 
-		return list;
+		repo.save(lostandfound);
+		return lostandfound;
 	}
 
 	// {id}인 lostAndFound 파일 1개 추가

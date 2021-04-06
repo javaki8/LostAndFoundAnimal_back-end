@@ -9,12 +9,6 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "api")
 @Data
 public class ApiConfiguration {
-	// ---- properties 파일
-	//api.base-path
-	
-	// --yml 파일
-	//api:
-	//   base-path:
+
 	private String basePath;
 }
-

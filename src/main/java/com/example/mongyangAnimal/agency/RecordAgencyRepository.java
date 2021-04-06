@@ -11,5 +11,10 @@ public interface RecordAgencyRepository extends JpaRepository<RecordAgency, Long
 
 	RecordAgency findByAddrAndAddrDtl(String addr, String addrDtl);
 
+	// 시도 + 구군 검색
 	List<RecordAgency> findBySidoContainingAndGugunContaining(String sido, String gugun, Pageable pageable);
+
+	// 시도만 검색
+	List<RecordAgency> findBySidoContaining(String sido, Pageable pageable);
+
 }

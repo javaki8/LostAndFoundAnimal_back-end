@@ -20,7 +20,7 @@ public class LostAndFoundService {
 // 관리자페이지로 전송
 	public void sendAnimal(LostAndFound lostandfound) {
 
-		System.out.println("-----postAnimal-----");
+		System.out.println("-----postAnimal  LOG-----");
 		System.out.println(lostandfound);
 
 		try {
@@ -31,11 +31,18 @@ public class LostAndFoundService {
 
 	}
 
-// 받는것
+// 관리자로 부터 받음
 	@RabbitListener(queues = "manager.animal.status")
-	public void receiveStatus(LostAndFound lostandfound) {
+	public void receiveStatus(LostAndFound lost) {
+
 		System.out.println("---- Manager LOG -----");
-		System.out.println(lostandfound);
-		repo.save(lostandfound);
+		System.out.println(lost);
+
+		// 관리자 lostId를 Id로 / status 만 받아서 저장.
+		LostAndFound lostAndFound = repo.findById(lost.getLostId()).orElse(null);
+		if (lostAndFound != null) {
+			lostAndFound.setStatus(lost.getStatus());
+			repo.save(lostAndFound);
+		}
 	}
 }

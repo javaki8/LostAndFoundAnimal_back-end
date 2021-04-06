@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +20,7 @@ public class RecordAgencyController {
 		this.repo = repo;
 	}
 
-	// 목록조회
-
+	// 시도+구군 목록조회
 	// http://localhost:8080/recordAgency?sido=경기&gugun=성남&page=1&size=1
 	@GetMapping(value = "/recordAgency")
 	public List<RecordAgency> getAgencyList(@RequestParam("sido") String sido, @RequestParam("gugun") String gugun,
@@ -32,7 +31,15 @@ public class RecordAgencyController {
 
 		return repo.findBySidoContainingAndGugunContaining(sido, gugun, PageRequest.of(page, size));
 
-		// return feedRepo.findByName(keyword, PageRequest.of(page, size,
-		// Sort.by("id").descending()));
+	}
+
+	// 시도 목록조회
+	// http://localhost:8080/sidoRecordAgency?sido=경기&page=1&size=10
+	@GetMapping(value = "/sidoRecordAgency")
+	public List<RecordAgency> getAgencySido(@RequestParam("sido") String sido, @RequestParam("page") int page,
+			@RequestParam("size") int size) {
+
+		return repo.findBySidoContaining(sido, PageRequest.of(page, size));
+
 	}
 }
