@@ -1,14 +1,17 @@
+server:
+  port: 8080
+  
 spring:
   rabbitmq:
     host: ec2-13-124-221-31.ap-northeast-2.compute.amazonaws.com
     username: rabbitmq
     password: password123
   application:
-    name: mongyang
+    name: lostAndFound
   profiles:
     active: default
   servlet:
-  #nohup java -jar -Dspring.profiles.active=prod ksk-0.0.1-SNAPSHOT.jar > ksk.log &
+  #nohup java -jar -Dspring.profiles.active=prod mongyangAnimal-0.0.1-SNAPSHOT.jar > mongyangAnimal.log &
   #multipart 파일 처리조건
     multipart:
       max-file-size: -1
@@ -16,22 +19,39 @@ spring:
       #database 접속 정보
   datasource:
       #jdbc:mysql : // 엔드포인트  / 데이터베이스? 옵션...    여기서쓴옵션은 한글로도 저장할꺼기때문에 깨지지않게하려고 쓴옵션
-    url: jdbc:mysql://mysql-1.cphhg1jfs3zv.ap-northeast-2.rds.amazonaws.com/mongyang?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://mysql-1.cphhg1jfs3zv.ap-northeast-2.rds.amazonaws.com/mongyang?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true
     username: admin
     password: password123!
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true # 데이터 처리할 때 SQL문을 보여줌
     generate-ddl: true #클래스 정의에 따른 테이블 및 데이터베이스 객체 생성    
+    properties:
+      hibernate:
+        generate_statistics: true
+        jdbc:
+          batch_size=5
+        order_inserts: true
+        order_updates: true
+    
 #  redis:
 #    host: 127.0.0.1
 #    port: 6379
   
 
 # 추가적인 속성
+
+eureka:
+  client:
+    serviceUrl:
+    # 유레카의 로컬 ip주소
+      defaultZone: http://192.168.0.28:8761/eureka/            
+  instance:
+  # 본인 서비스의 로컬 ip주소
+    hostname: 192.168.0.26
+ 
 api:
   base-path: http://localhost:8080
-#
 #eureka:
 #  client:
 #    service-url:
@@ -49,6 +69,15 @@ spring:
 #    host: 52.79.227.47
 #    port: 6379
 #    password: foobared  
-  
-api:
-  base-path: http://ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com:8080
+eureka:
+  client:
+    service-url:
+    # 유레카의 ec2 주소
+      default-zone: http://13.124.190.225:8761/eureka          
+  instance:
+  # 본인 서비스의 ec2주소
+    hostname: ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com
+# nohup java -jar -Dspring.profiles.active=prod ksk-0.0.1-SNAPSHOT.jar > ksk.log &
+ 
+#api:
+#  base-path: http://ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com:8080
