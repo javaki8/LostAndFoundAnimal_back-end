@@ -10,11 +10,13 @@ public class LostAndFoundService {
 
 	private RabbitTemplate rabbit;
 	private LostAndFoundRepository repo;
+	private AnimalFileRepository fileRepo;
 
 	@Autowired
-	public LostAndFoundService(RabbitTemplate rabbit, LostAndFoundRepository repo) {
+	public LostAndFoundService(RabbitTemplate rabbit, LostAndFoundRepository repo, AnimalFileRepository fileRepo) {
 		this.rabbit = rabbit;
 		this.repo = repo;
+		this.fileRepo = fileRepo;
 	}
 
 // 관리자페이지로 전송
@@ -29,6 +31,18 @@ public class LostAndFoundService {
 			System.out.println(e.getMessage());
 		}
 
+	}
+
+// 관리자 페이지로 사진 전송
+	public void sendAnimalFile(AnimalFile animalFile) {
+		System.out.println("-----File  LOG-----");
+		System.out.println(animalFile);
+
+		try {
+			rabbit.convertAndSend("animal.file", animalFile);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 // 관리자로 부터 받음

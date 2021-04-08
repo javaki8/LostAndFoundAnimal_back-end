@@ -67,7 +67,7 @@ public class LostAndFoundController {
 		return list;
 	}
 
-	// 1건 추가
+	// 글 1건 추가
 	@PostMapping(value = "/lostandfounds")
 	public LostAndFound createLostAndFound(@RequestBody LostAndFound lostandfound) {
 
@@ -75,8 +75,8 @@ public class LostAndFoundController {
 
 		repo.save(lostandfound);
 		// 관리자 전송
-		service.sendAnimal(lostandfound);
 
+		service.sendAnimal(lostandfound);
 		return lostandfound;
 
 	}
@@ -164,6 +164,9 @@ public class LostAndFoundController {
 		fileRepo.save(animalFile);
 		animalFile.setDataUrl(apiConfig.getBasePath() + "/animal-files/" + animalFile.getId());
 		System.out.println("URL : " + animalFile);
+
+		// 관리자 전송
+		service.sendAnimalFile(animalFile);
 		return animalFile;
 	}
 
