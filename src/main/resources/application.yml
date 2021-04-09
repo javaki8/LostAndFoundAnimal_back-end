@@ -40,16 +40,16 @@ spring:
   
 
 # 추가적인 속성
-
-eureka:
-  client:
-    serviceUrl:
-    # 유레카의 로컬 ip주소
-      defaultZone: http://192.168.0.28:8761/eureka/            
-  instance:
-  # 본인 서비스의 로컬 ip주소
-    hostname: 192.168.0.26
- 
+#
+#eureka:
+#  client:
+#    serviceUrl:
+#    # 유레카의 로컬 ip주소
+#      defaultZone: http://192.168.0.28:8761/eureka/            
+#  instance:
+#  # 본인 서비스의 로컬 ip주소
+#    hostname: 192.168.0.26
+# 
 api:
   base-path: http://localhost:8080
 #eureka:
@@ -78,6 +78,6 @@ eureka:
   # 본인 서비스의 ec2주소
     hostname: ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com
 # nohup java -jar -Dspring.profiles.active=prod ksk-0.0.1-SNAPSHOT.jar > ksk.log &
- 
-#api:
-#  base-path: http://ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com:8080
+# 
+api:
+  base-path: http://ec2-52-79-227-47.ap-northeast-2.compute.amazonaws.com:8080
